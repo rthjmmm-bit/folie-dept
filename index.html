@@ -307,6 +307,18 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(48px,6vw,84px) 0 2
             <span class="was">$70.00</span>
             <span class="off">−50%</span>
           </div>
+          <div class="flash-cd">
+            <span class="flash-label">⚡ Launch sale ends in</span>
+            <span class="cd-wrap" id="cd-flash">
+              <span class="cd-unit"><span class="cd-n" id="cd-f-d">--</span><span class="cd-l">D</span></span>
+              <span class="cd-sep">:</span>
+              <span class="cd-unit"><span class="cd-n" id="cd-f-h">--</span><span class="cd-l">H</span></span>
+              <span class="cd-sep">:</span>
+              <span class="cd-unit"><span class="cd-n" id="cd-f-m">--</span><span class="cd-l">M</span></span>
+              <span class="cd-sep">:</span>
+              <span class="cd-unit"><span class="cd-n" id="cd-f-s">--</span><span class="cd-l">S</span></span>
+            </span>
+          </div>
           <div class="tax">Tax included. Shipping calculated at checkout.</div>
           <p class="desc">Heavyweight boxy tee in a vintage-washed white. Hand-distressed
             Folie Dept. screenprint with the archival red character graphic and script
@@ -375,7 +387,19 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(48px,6vw,84px) 0 2
           <div class="way"><span class="sw" style="background:#0c0c0c"></span>Blackout</div>
         </div>
 
-        <div class="rel"><span class="dot"></span>Releasing 12 · 20 — 9AM PST</div>
+        <div class="rel">
+          <span class="dot"></span>
+          <span class="rel-label">Drop 002 drops in</span>
+          <span class="cd-wrap" id="cd-soon">
+            <span class="cd-unit"><span class="cd-n" id="cd-s-d">--</span><span class="cd-l">D</span></span>
+            <span class="cd-sep">:</span>
+            <span class="cd-unit"><span class="cd-n" id="cd-s-h">--</span><span class="cd-l">H</span></span>
+            <span class="cd-sep">:</span>
+            <span class="cd-unit"><span class="cd-n" id="cd-s-m">--</span><span class="cd-l">M</span></span>
+            <span class="cd-sep">:</span>
+            <span class="cd-unit"><span class="cd-n" id="cd-s-s">--</span><span class="cd-l">S</span></span>
+          </span>
+        </div>
 
         <div class="notify">
           <input type="email" id="notifyEmail" placeholder="Email for early access" autocomplete="email">
@@ -611,6 +635,61 @@ const io=new IntersectionObserver(es=>{
   es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} });
 },{threshold:.12});
 $$(".rv").forEach(el=>io.observe(el));
+</script>
+
+<style>
+/* ── COUNTDOWN SHARED ── */
+.cd-wrap{display:inline-flex;align-items:center;gap:2px;font-family:var(--sans);font-weight:700;letter-spacing:.02em}
+.cd-unit{display:inline-flex;flex-direction:column;align-items:center;min-width:28px}
+.cd-n{font-size:1.05rem;line-height:1}
+.cd-l{font-size:.52rem;font-weight:400;opacity:.55;letter-spacing:.08em;margin-top:1px}
+.cd-sep{font-size:.95rem;font-weight:300;opacity:.4;align-self:flex-start;padding-top:1px;margin:0 1px}
+/* ── COMING SOON .rel ── */
+.rel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--paper);opacity:.85;margin-top:8px}
+.rel-label{font-size:.62rem;opacity:.6;letter-spacing:.1em}
+#cd-soon .cd-n,#cd-soon .cd-l{color:var(--paper)}
+/* ── FLASH SALE ── */
+.flash-cd{display:flex;align-items:center;gap:10px;margin:10px 0 4px;padding:8px 12px;background:var(--ink);color:var(--paper);border-radius:4px;flex-wrap:wrap}
+.flash-label{font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;opacity:.85;white-space:nowrap}
+#cd-flash .cd-n,#cd-flash .cd-l{color:var(--paper)}
+</style>
+
+<script>
+/* ── COUNTDOWN TIMERS ── */
+// DROP 002 target — update this date when confirmed
+const DROP002 = new Date('2026-09-01T17:00:00Z');
+// Flash sale end — 50% off launch deal
+const FLASH_END = new Date('2026-06-30T07:00:00Z');
+const pad = n => String(n).padStart(2,'0');
+function timeLeft(t){
+  const d = t - Date.now();
+  if(d <= 0) return null;
+  const s = Math.floor(d/1000);
+  return {d:Math.floor(s/86400),h:Math.floor((s%86400)/3600),m:Math.floor((s%3600)/60),s:s%60};
+}
+function cdTick(){
+  const tl = timeLeft(DROP002);
+  if(tl){
+    document.getElementById('cd-s-d').textContent=pad(tl.d);
+    document.getElementById('cd-s-h').textContent=pad(tl.h);
+    document.getElementById('cd-s-m').textContent=pad(tl.m);
+    document.getElementById('cd-s-s').textContent=pad(tl.s);
+  } else {
+    document.getElementById('cd-soon').textContent='LIVE NOW';
+  }
+  const fl = timeLeft(FLASH_END);
+  if(fl){
+    document.getElementById('cd-f-d').textContent=pad(fl.d);
+    document.getElementById('cd-f-h').textContent=pad(fl.h);
+    document.getElementById('cd-f-m').textContent=pad(fl.m);
+    document.getElementById('cd-f-s').textContent=pad(fl.s);
+  } else {
+    const fc = document.querySelector('.flash-cd');
+    if(fc) fc.style.display='none';
+  }
+}
+cdTick();
+setInterval(cdTick,1000);
 </script>
 </body>
 </html>
