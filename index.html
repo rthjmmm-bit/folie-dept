@@ -159,6 +159,23 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .notify .btn:hover{background:#fff}
 .soon-note{font-size:10.5px;color:#6f6a61;letter-spacing:.1em;margin-top:14px;text-transform:uppercase}
 
+/* early access capture */
+.access{background:var(--charcoal);color:var(--paper);padding:96px 0}
+.access-in{max-width:620px;margin:0 auto;text-align:center}
+.access-eye{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);margin-bottom:20px}
+.access-h{font-size:clamp(26px,4vw,40px);font-weight:700;line-height:1.2;margin-bottom:16px}
+.access-h em{font-family:var(--serif);font-weight:400;font-style:italic}
+.access-sub{color:var(--mut);font-size:15px;margin-bottom:36px}
+.access-fields{display:flex;gap:12px;margin-bottom:14px}
+.access-input{flex:1;background:rgba(255,255,255,.07);border:1px solid var(--line-d);color:var(--paper);padding:14px 18px;font-family:var(--sans);font-size:14px;border-radius:2px;transition:border .2s}
+.access-input::placeholder{color:var(--mut)}
+.access-input:focus{outline:none;border-color:rgba(255,255,255,.4)}
+.access-btn{width:100%;padding:16px;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+.access-success{padding:24px 0}
+.access-check{display:block;font-size:32px;margin-bottom:10px;color:var(--paper)}
+.access-success p{font-size:15px;color:var(--mut)}
+.access-legal{font-size:11px;color:var(--mut);opacity:.55;margin-top:18px;line-height:1.5}
+@media(max-width:600px){.access-fields{flex-direction:column}}
 /* editorial brand strip */
 .ed{padding:clamp(56px,8vw,120px) 0;text-align:center;position:relative}
 .ed .em{height:96px;margin:0 auto 30px;opacity:.9;filter:contrast(1.05)}
@@ -455,6 +472,27 @@ footer{background:var(--ink);color:var(--paper);padding:clamp(48px,6vw,84px) 0 2
     </div>
   </section>
 
+  <!-- early access capture -->
+  <section class="access dark" id="access">
+    <div class="wrap access-in rv">
+      <p class="access-eye">Early Access</p>
+      <h2 class="access-h">Get drops before everyone else.<br><em>Plus 10% off your first order.</em></h2>
+      <p class="access-sub">Join the list. Be first. No spam — just Folie.</p>
+      <form class="access-form" id="accessForm" novalidate>
+        <div class="access-fields">
+          <input class="access-input" type="email" id="accessEmail" name="email" placeholder="Email address" autocomplete="email" required>
+          <input class="access-input" type="tel" id="accessPhone" name="phone" placeholder="Phone (optional)" autocomplete="tel">
+        </div>
+        <button class="btn btn-fill access-btn" type="submit" id="accessBtn">Unlock Early Access</button>
+      </form>
+      <div class="access-success" id="accessSuccess" hidden>
+        <span class="access-check">✓</span>
+        <p>You're in. Check your inbox for your 10% off code.</p>
+      </div>
+      <p class="access-legal">By submitting you agree to receive email & SMS updates from Folie Dept. Unsubscribe anytime.</p>
+    </div>
+  </section>
+
   <!-- editorial -->
   <section class="ed" id="about">
     <div class="wrap">
@@ -675,6 +713,30 @@ addEventListener("scroll",()=>{
 },{passive:true});
 
 /* ---------- reveal ---------- */
+/* early access form */
+(function(){
+  const form=document.getElementById('accessForm');
+  const btn=document.getElementById('accessBtn');
+  const success=document.getElementById('accessSuccess');
+  if(!form)return;
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    const email=document.getElementById('accessEmail').value.trim();
+    if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+      document.getElementById('accessEmail').style.borderColor='rgba(255,80,80,.6)';
+      return;
+    }
+    btn.disabled=true;
+    btn.textContent='Joining…';
+    // Store locally + simulate success (wire to Klaviyo/Shopify later)
+    try{localStorage.setItem('folie_access',JSON.stringify({email,phone:document.getElementById('accessPhone').value.trim(),ts:Date.now()}));}catch(err){}
+    setTimeout(function(){
+      form.hidden=true;
+      success.hidden=false;
+    },600);
+  });
+})();
+
 const io=new IntersectionObserver(es=>{
   es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add("in"); io.unobserve(e.target);} });
 },{threshold:.12});
